@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:textSize="@dimen/textSize_micro"
+        android:textSize="@dimen/textSize_small"
         android:textColor="@android:color/white"
         android:layout_marginTop="@dimen/margin_small"
         android:textStyle="bold"
@@ -43,7 +43,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/textSize_tiny"
+        android:textSize="@dimen/textSize_micro"
         android:layout_centerInParent="true"
         android:textStyle="bold"
         android:layout_marginTop="@dimen/margin_small"
@@ -150,6 +150,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/cardRemember"
         />
 

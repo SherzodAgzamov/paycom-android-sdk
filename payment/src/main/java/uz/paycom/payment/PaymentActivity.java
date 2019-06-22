@@ -131,6 +131,7 @@ public class PaymentActivity extends AppCompatActivity {
     if (amount <= 0) {setResult(RESULT_CANCELED); finish();}
     activityMainPaymentSum.setText(formatMoney(amount, true) + " " + resources.getString(R.string.card_balance_currency));
     activityMainCardRemember.setVisibility(save ? View.VISIBLE : View.GONE);
+    activityMainCardRemember.setChecked(save);
   }
 
   public static boolean isValid(String code) {
