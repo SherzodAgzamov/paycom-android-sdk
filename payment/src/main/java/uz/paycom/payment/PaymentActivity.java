@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -58,6 +59,10 @@ public class PaymentActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.paycom_payment_main);
 
+    if(getSupportActionBar() != null) {
+      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
     activityMainClose = findViewById(R.id.activity_main_close);
     activityMainContinue = findViewById(R.id.activity_main_continue);
     activityMainProgress = findViewById(R.id.activity_main_progress);
@@ -104,6 +109,14 @@ public class PaymentActivity extends AppCompatActivity {
         activityMainErrorLayout.setVisibility(View.GONE);
       }
     });
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      finish();
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   private void initUI() {
