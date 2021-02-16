@@ -17,4 +17,5 @@
     <string name = "paycomTitle">Paycom To`lov</string>
   <string name="invalidCard">Karta raqami noto`g`ri`kiritildi</string>
     <string name="card_balance_currency">so`m</string>
+    <string name="failed_get_code">Tasdiqlash kod qabul qilinmadi</string>
 </resources>

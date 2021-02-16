@@ -17,4 +17,5 @@
     <string name="paycomTitle">Paycom Оплата</string>
     <string name="invalidCard">Неправильный номер карты</string>
     <string name="card_balance_currency">сум</string>
+    <string name="failed_get_code">Не удалось получить код</string>
 </resources>

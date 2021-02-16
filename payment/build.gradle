@@ -32,6 +32,8 @@ android {
 
 dependencies {
   implementation "com.android.support:appcompat-v7:$supportVersion"
+  implementation "com.google.android.gms:play-services-auth:18.1.0"
+  implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.0'
 }
 
 group = 'uz.paycom'

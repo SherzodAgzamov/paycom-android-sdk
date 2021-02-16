@@ -3,8 +3,8 @@ package uz.paycom.payment;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +14,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
@@ -195,6 +201,21 @@ public class PaymentActivity extends AppCompatActivity {
       activityMainErrorLayout.setVisibility(View.VISIBLE);
       activityMainErrorMessage.setText(s);
     }
+  }
+
+  public void listenIncomingMessages() {
+    Task<Void> task = SmsRetriever.getClient(this).startSmsUserConsent(null);
+
+    task.addOnSuccessListener(new OnSuccessListener<Void>() {
+      @Override public void onSuccess(Void aVoid) {
+        Log.d("SMS Retriever:", "Verification started");
+      }
+    });
+    task.addOnFailureListener(new OnFailureListener() {
+      @Override public void onFailure(@NonNull Exception e) {
+        e.printStackTrace();
+      }
+    });
   }
 
   @Override

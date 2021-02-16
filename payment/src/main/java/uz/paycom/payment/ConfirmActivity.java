@@ -1,12 +1,15 @@
 package uz.paycom.payment;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +21,15 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import android.widget.Toast;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.Status;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.json.JSONObject;
 
 import uz.paycom.payment.api.JsonParser;
@@ -46,6 +58,46 @@ public class ConfirmActivity extends AppCompatActivity {
   private TextView activityConfirmPhoneNumberTitle;
   private TextView activityConfirmCodeConfirmTitle;
   private RelativeLayout activityConfirmErrorLayout;
+
+  private final int CONSENT_REQUEST = 123;
+  private final Pattern codePattern = Pattern.compile("(\\d{6})");
+
+  private final BroadcastReceiver receiver = new BroadcastReceiver() {
+    @Override public void onReceive(Context context, Intent intent) {
+      if (SmsRetriever.SMS_RETRIEVED_ACTION.equals(intent.getAction())) {
+        Bundle extras = intent.getExtras();
+        Status status = (Status) extras.get(SmsRetriever.EXTRA_STATUS);
+
+        switch (status.getStatusCode()) {
+          case CommonStatusCodes.SUCCESS: {
+
+            Intent consentIntent = extras.getParcelable(SmsRetriever.EXTRA_CONSENT_INTENT);
+            try {
+              if(consentIntent != null){
+                onSuccess(consentIntent);
+              }else{
+                onError();
+              }
+            } catch (ActivityNotFoundException e) {
+              onError();
+            }
+          }
+          case CommonStatusCodes.TIMEOUT: {
+            onError();
+          }
+        }
+
+      }
+    }
+  };
+
+  private void onSuccess(Intent intent){
+    startActivityForResult(intent, CONSENT_REQUEST);
+  }
+
+  private void onError(){
+    Toast.makeText(this, getString(R.string.failed_get_code), Toast.LENGTH_SHORT).show();
+  }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -228,9 +280,42 @@ public class ConfirmActivity extends AppCompatActivity {
     }
   }
 
+  private void parseOneTimeCode(String message) {
+    Matcher matcher = codePattern.matcher(message);
+
+    if(matcher.find()){
+      activityConfirmCodeConfirm.setText(matcher.group());
+    }
+  }
+
+  @Override protected void onResume() {
+    super.onResume();
+    IntentFilter filter = new IntentFilter("com.google.android.gms.auth.api.phone.SMS_RETRIEVED");
+    registerReceiver(receiver, filter);
+  }
+
+  @Override protected void onPause() {
+    super.onPause();
+    unregisterReceiver(receiver);
+  }
+
   @Override
   public void onBackPressed() {
     super.onBackPressed();
     setResult(RESULT_CANCELED);
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if(requestCode == CONSENT_REQUEST){
+      if(resultCode == Activity.RESULT_OK && data != null){
+        String message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE);
+        parseOneTimeCode(message);
+      }else{
+        Toast.makeText(this, getString(R.string.failed_get_code), Toast.LENGTH_SHORT).show();
+      }
+    }
   }
 }

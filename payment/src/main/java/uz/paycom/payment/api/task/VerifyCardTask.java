@@ -69,6 +69,7 @@ public class VerifyCardTask extends AsyncTask<Void, Void, String> {
     } else if (hasError) {
       activity.showError(s);
     } else {
+      activity.listenIncomingMessages();
       Intent intent = new Intent(activity, ConfirmActivity.class);
       intent.putExtra(ConfirmActivity.ARG_CONFIRM, jsonParser.getConfirm(s));
       intent.putExtra(ConfirmActivity.ARG_TOKEN, token);
